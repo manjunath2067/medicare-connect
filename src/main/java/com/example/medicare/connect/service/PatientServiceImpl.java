@@ -1,6 +1,7 @@
 package com.example.medicare.connect.service;
 
 import com.example.medicare.connect.model.Patient;
+import com.example.medicare.connect.model.Users;
 import com.example.medicare.connect.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,12 +39,23 @@ public class PatientServiceImpl implements PatientService {
         Patient existingPatient = patientRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Patient not found with id: " + id));
 
-        existingPatient.setName(patient.getName());
-        existingPatient.setEmail(patient.getEmail());
-        existingPatient.setPhone(patient.getPhone());
-        existingPatient.setGender(patient.getGender());
-        existingPatient.setAddress(patient.getAddress());
+        Users existingUser = existingPatient.getUser();
+        Users newUser = patient.getUser();
 
+        if (newUser != null) {
+            if (newUser.getName() != null) existingUser.setName(newUser.getName());
+            if (newUser.getEmail() != null) existingUser.setEmail(newUser.getEmail());
+            if (newUser.getPhone() != null) existingUser.setPhone(newUser.getPhone());
+            if (newUser.getGender() != null) existingUser.setGender(newUser.getGender());
+        }
+
+        if (patient.getAddress() != null) {
+            existingPatient.setAddress(patient.getAddress());
+        }
+
+        if (patient.getAge() != 0) {
+            existingPatient.setAge(patient.getAge());
+        }
         return patientRepository.save(existingPatient);
     }
 
